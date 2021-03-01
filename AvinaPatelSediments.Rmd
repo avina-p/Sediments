@@ -1,0 +1,183 @@
+```{r}
+Sediment <- read.table("Sediment.txt", sep = "|", fill=TRUE)
+Creek <- (Sediment$V1)
+Side <- (Sediment$V2)
+Number <- (Sediment$V3)
+Distance <- (Sediment$V4)
+Measurement <- (Sediment$V5)
+```
+
+```{r}
+#Question 1A
+boxplot(Measurement~Side+Creek,
+data = Sediment,
+col = c("palevioletred1","skyblue","palevioletred1","skyblue","palevioletred1","skyblue"),
+names = c("Land.A", "Sea.A", "Land.B", "Sea.B", "Land.C", "Sea.C", "Land.D", "Sea.D", "Land.E", "Sea.E", "Land.F", "Sea.F"), 
+xlab="Creeks at Land and Sea",
+ylab="Contaminent Measurement")
+legend("topleft", legend = c("Land", "Sea"), pch = c(15,15), bty = "n", pt.cex = 2, cex = .8, text.col = "black", horiz = F, col = c("palevioletred1","skyblue"))
+```
+```{r}
+#Question 1B
+A1 <- factor(Creek, levels = c("A", "B", "C", "D", "E", "F"))
+B1 <- factor(Side, levels=c("Land","Sea"))
+C1 <- data.frame(tapply(Measurement, list(A1,B1), mean))
+View(C1)
+```
+
+```{r}
+ModelAll <- lm(Measurement~Creek+Side+Creek:Side)
+summary(ModelAll)
+```
+```{r}
+#Question 1C
+#Land only
+LandSideMeasurement<-data.frame(subset(Sediment, Sediment$V2=="Land")) #Makes a subset of land data
+ModelZZZ<-lm(LandSideMeasurement$V5~LandSideMeasurement$V4)
+summary(ModelZZZ)
+plot(ModelZZZ)
+```
+```{r}
+library(MASS)
+library(car)
+boxcox(LandSideMeasurement$V5~LandSideMeasurement$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(ModelZZZ)
+
+LDist<-data.frame(LandSideMeasurement$V1,LandSideMeasurement$V2,LandSideMeasurement$V3,LandSideMeasurement$V4,TranMeasurement)
+colnames(LDist) <- c("Creek", "Side", "Number", "Distance", "Measurement")
+ModelLLL <- lm(LDist$Measurement~LDist$Distance)
+summary(ModelLLL)
+#Lambda is 0.33 so do square root transformation
+```
+```{r}
+#Transformation
+TransformLand <- sqrt(LandSideMeasurement$V5)
+View(TransformLand)
+TransformLand<-lm(TransformLand~LandSideMeasurement$V4)
+summary(TransformLand)
+plot(TransformLand)
+```
+```{r}
+ALandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="A"))
+ALandPlotsNorm<-lm(ALandSide$V5~ALandSide$V4)
+summary(ALandPlotsNorm)
+plot(ALandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(ALandSide$V5~ALandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(ALandPlotsNorm)
+```
+```{r}
+ASquared <- (ALandSide$V5)^2
+ASquared2<-lm(ASquared~ALandSide$V4)
+plot(ASquared2)
+summary(ASquared2)
+```
+
+
+```{r}
+BLandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="B"))
+BLandPlotsNorm<-lm(BLandSide$V5~BLandSide$V4)
+summary(BLandPlotsNorm)
+plot(BLandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(BLandSide$V5~BLandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(BLandPlotsNorm)
+```
+
+```{r}
+CLandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="C"))
+CLandPlotsNorm<-lm(CLandSide$V5~CLandSide$V4)
+summary(CLandPlotsNorm)
+plot(CLandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(CLandSide$V5~CLandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(CLandPlotsNorm)
+```
+```{r}
+CLog <- log(CLandSide$V5)
+CLog2<-lm(CLog~CLandSide$V4)
+plot(CLog2)
+summary(CLog2)
+```
+
+```{r}
+DLandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="D"))
+DLandPlotsNorm<-lm(DLandSide$V5~DLandSide$V4)
+summary(DLandPlotsNorm)
+plot(DLandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(DLandSide$V5~DLandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(DLandPlotsNorm)
+```
+```{r}
+ELandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="E"))
+ELandPlotsNorm<-lm(ELandSide$V5~ELandSide$V4)
+summary(ELandPlotsNorm)
+plot(ELandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(ELandSide$V5~ELandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(ELandPlotsNorm)
+```
+```{r}
+ELog <- log(ELandSide$V5)
+ELog2<-lm(ELog~ELandSide$V4)
+plot(ELog2)
+summary(ELog2)
+```
+
+```{r}
+FLandSide<-data.frame(subset(LandSideMeasurement, LandSideMeasurement$V1=="F"))
+FLandPlotsNorm<-lm(FLandSide$V5~FLandSide$V4)
+summary(FLandPlotsNorm)
+plot(FLandPlotsNorm)
+
+library(MASS)
+library(car)
+boxcox(FLandSide$V5~FLandSide$V4, lambda = seq(-1, 1, 0.1))
+powerTransform(FLandPlotsNorm)
+```
+
+```{r}
+FTrans <- 1/(sqrt(FLandSide$V5))
+FTrans2<-lm(FTrans~FLandSide$V4)
+plot(FTrans2)
+summary(FTrans2)
+```
+
+```{r}
+#Question 2
+x <- c(9, 3, 7, 9, 8, 12, 15, 12, 10, 14, 7, 9, 8, 11, 13, 1, 8, 7, 4, 19, 16, 14, 13, 16, 8)
+y <- length(x)
+z <- rep(0,y)
+for (i in x) {
+  if (i > 5) z[i] <- i
+  }
+sum(z)
+mean(z)
+sd(z)
+```
+
+```{r}
+set.seed(4)
+w <- c(.30, .30, .15, .5, .20)
+y <- length(w)
+z <- rep(0,y)
+for (i in w) {
+  if (i > .05) z[i] <- i
+  }
+sum(z)
+mean(z)
+sd(z)
+```
+
+
